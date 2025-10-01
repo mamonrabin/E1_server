@@ -2,6 +2,7 @@ import { HydratedDocument, model, Schema } from 'mongoose';
 import { TProduct } from './product.interface';
 import SlugUtils from '../../../utils/slug.utils';
 const { generateSlug } = SlugUtils;
+
 const productSchema = new Schema<TProduct>(
   {
     title: { type: String, required: true },
@@ -21,10 +22,6 @@ const productSchema = new Schema<TProduct>(
     subCategory: {
       type: Schema.Types.ObjectId,
       ref: 'subCategory',
-    },
-    size: {
-      type: Schema.Types.ObjectId,
-      ref: 'size',
     },
     colors: [
       {
@@ -86,20 +83,17 @@ productSchema.pre('save', function (next) {
       product.sku = `${titlePart}-${brandCode}-${timePart}`;
     }
 
-    // Generate barcode
-    // if (!product.barcode) {
-    //   product.barcode = generateEAN13Barcode();
-    // }
-
     // Calculate price from mrpPrice and discount
     if (product.mrpPrice) {
       if (product.discount !== undefined && product.discount !== null) {
         product.price =
           product.mrpPrice - (product.mrpPrice * product.discount) / 100;
       } else {
-        product.price = undefined; // 👈 empty if no discount
+        product.price = undefined;
       }
     }
+
+   
 
     // ✅ Calculate availableQuantity and soldQuantity
     if (product.quantity !== undefined) {
@@ -108,7 +102,7 @@ productSchema.pre('save', function (next) {
         product.quantity - (product.soldQuantity ?? 0);
 
       if (product.availableQuantity < 0) {
-        product.availableQuantity = 0; // prevent negative values
+        product.availableQuantity = 0;
       }
     }
 

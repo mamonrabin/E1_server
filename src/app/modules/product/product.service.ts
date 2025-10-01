@@ -122,6 +122,51 @@ const getBestSellerProducts = async (limit = 8) => {
   return defaultProducts;
 };
 
+// const getAllProductByBDWithPagination = async (
+//   query: Record<string, unknown>,
+// ) => {
+//   // Get sort options
+//   const { sortField, sortOrder } = getSortOptions(query.sortBy as string);
+
+//   // Get pagination options
+//   const { skip, limit } = getPaginationOptions(query);
+
+//   const filters = await QueryBuilder(query);
+
+//   // ✅ Price range filter
+//   const minPrice = Number(query.minPrice);
+//   const maxPrice = Number(query.maxPrice);
+//   if (!isNaN(minPrice) || !isNaN(maxPrice)) {
+//     filters.price = {}; // add the price object
+//     if (!isNaN(minPrice))
+//       (filters.price as Record<string, number>).$gte = minPrice;
+//     if (!isNaN(maxPrice))
+//       (filters.price as Record<string, number>).$lte = maxPrice;
+//   }
+
+//   const result = await productModel
+//     .find(filters)
+//     .populate([
+//       {
+//         path: 'category',
+//       },
+//       {
+//         path: 'colors',
+//         populate: {
+//         path: 'size',
+//       },
+//       },
+//       {
+//         path: 'brand',
+//       },
+//     ])
+//     .sort({ [sortField]: sortOrder })
+//     .skip(skip)
+//     .limit(limit);
+
+//   return result;
+// };
+
 const getAllProductByBDWithPagination = async (
   query: Record<string, unknown>,
 ) => {
@@ -129,7 +174,7 @@ const getAllProductByBDWithPagination = async (
   const { sortField, sortOrder } = getSortOptions(query.sortBy as string);
 
   // Get pagination options
-  const { skip, limit } = getPaginationOptions(query);
+  const { skip, limit, page } = getPaginationOptions(query);
 
   const filters = await QueryBuilder(query);
 
@@ -144,28 +189,38 @@ const getAllProductByBDWithPagination = async (
       (filters.price as Record<string, number>).$lte = maxPrice;
   }
 
-  const result = await productModel
-    .find(filters)
-    .populate([
-      {
-        path: 'category',
-      },
-      {
-        path: 'colors',
-        populate: {
-        path: 'size',
-      },
-      },
-      {
-        path: 'brand',
-      },
-    ])
-    .sort({ [sortField]: sortOrder })
-    .skip(skip)
-    .limit(limit);
+  // ✅ Fetch data with pagination
+  const [result, total] = await Promise.all([
+    productModel
+      .find(filters)
+      .populate([
+        { path: 'category',
+         },
+        {
+          path: 'colors',
+          populate: { path: 'size' },
+        },
+        { path: 'brand' },
+      ])
+      .sort({ [sortField]: sortOrder })
+      .skip(skip)
+      .limit(limit),
+    productModel.countDocuments(filters),
+  ]);
 
-  return result;
+  // ✅ Return structured response
+  return {
+    data: result,
+    meta: {
+      total,
+      page,
+      limit,
+    },
+  };
 };
+
+
+
 const getSingleProductByBD = async (id: string) => {
   const result = await productModel.findById(id);
   return result;

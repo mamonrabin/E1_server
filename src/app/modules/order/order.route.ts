@@ -1,12 +1,10 @@
 import express from 'express';
-import upload from '../../../middleware/ImgUploder';
 import { orderController } from './order.controller';
 
 const router = express.Router();
 
 router.post(
   '/create-order',
-  upload.single('image'),
   orderController.createOrder,
 );
 router.get('/', orderController.getAllOrder);

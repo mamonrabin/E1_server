@@ -7,7 +7,7 @@ export default {
   database_url: process.env.MONGO_CONNECTION_STRING,
   bcrypt_salt_round: process.env.BCRYPT_SALT_ROUND,
 
-  jwt_acess_token_secret: process.env.JWT_SECRET,
+  jwt_acess_token_secret: process.env.JWT_ACCESS_SECRET_KEY,
   access_token_expires_in: process.env.JWT_EXPIRES_IN,
   refresh_secret: process.env.JWT_REFRESH_SECRET,
   refresh_expires_in: process.env.JWT_REFRESH_EXPIRES_IN,

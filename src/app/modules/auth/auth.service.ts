@@ -27,9 +27,11 @@ const login = async (payload: TUser) => {
   const jwtPayload = {
     email: user.email,
     name: user.name,
+    phone: user.phone,
     status: user.status,
     role: user.role,
     bio: user.bio,
+    _id: user._id,
   };
 
   const expiresIn: number | undefined = config.access_token_expires_in
@@ -64,11 +66,13 @@ const signup = async (payload: TUser) => {
   const newUser = await userModel.create(payload);
 
   const jwtPayload = {
-    email: newUser.email,
     name: newUser.name,
+    email: newUser.email,
+    phone: newUser.phone,
     status: newUser.status,
     role: newUser.role,
     bio: newUser.bio,
+    _id: newUser._id,
   };
 
   const expiresIn: number | undefined = config.access_token_expires_in

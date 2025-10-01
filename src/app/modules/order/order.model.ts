@@ -9,68 +9,46 @@ const orderSchema = new Schema<TOrder>(
       unique: true,
     },
 
-    subTotalPrice: {
-      type: Number,
-    },
-    totalPrice: {
-      type: Number,
-    },
-    shippingCost: {
-      type: Number,
-      default: 0,
-    },
+    subTotalPrice: { type: Number, required: true },
+    totalPrice: { type: Number, required: true },
+    shippingCost: { type: Number, default: 0 },
+
     couponRef: {
       type: Schema.Types.ObjectId,
       ref: 'coupon',
     },
 
-    userRef: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-    },
+    // userRef: {
+    //   type: Schema.Types.ObjectId,
+    //   ref: 'User',
+    // },
 
-    productRef: {
-      type: Schema.Types.ObjectId,
-      ref: 'product',
-      required: true,
-    },
+    products: [
+      {
+        productRef: {
+          type: Schema.Types.ObjectId,
+          ref: 'product',
+          required: true,
+        },
+        quantity: { type: Number, required: true },
+        color: { type: String },
+        size: { type: String },
+      },
+    ],
 
-    quantity: { type: Number, required: true },
-    customerName: {
-      type: String,
-      required: true,
-    },
-    customerPhone: {
-      type: String,
-      required: true,
-    },
-    customerEmail: {
-      type: String,
-      required: true,
-    },
-    customerCity: {
-      type: String,
-      required: true,
-    },
-    customerAddress: {
-      type: String,
-      required: true,
-    },
-    customerHouse: {
-      type: String,
-    },
-    customerRoad: {
-      type: String,
-    },
-    customerThana: {
-      type: String,
-    },
-    customerAltPhone: {
-      type: String,
-    },
+    name: { type: String, required: true },
+    phone: { type: String, required: true },
+    email: { type: String },
+    city: { type: String, required: true },
+    address: { type: String, required: true },
+    house: { type: String },
+    road: { type: String },
+    thana: { type: String },
+    altPhone: { type: String },
+
     paymentMethod: {
       type: String,
-      enum: ['CashOnDelivery', 'Online'],
+      enum: ['CashOnDelivery', 'bkash', 'card'],
       default: 'CashOnDelivery',
     },
 
@@ -86,9 +64,8 @@ const orderSchema = new Schema<TOrder>(
       ],
       default: 'OrderPlaced',
     },
-    note: {
-      type: String,
-    },
+
+    note: { type: String },
   },
   { timestamps: true },
 );

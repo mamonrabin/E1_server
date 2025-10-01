@@ -28,6 +28,24 @@ const getAllCart = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const getAllCartByUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const { userId } = req.params; // userId from route
+    const result = await cartService.getAllCartByUserBD(userId);
+    res.status(200).json({
+      success: true,
+      message: 'Cart fetched successfully by user',
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getSingleCart = async (
   req: Request,
   res: Response,
@@ -89,4 +107,5 @@ export const cartController = {
   getSingleCart,
   updateSingleCart,
   deleteSingleCart,
+  getAllCartByUser
 };

@@ -10,7 +10,6 @@ export type TProduct = {
   availableQuantity?: number;
   soldQuantity?: number;
   description: string;
-  size?: ObjectId[];
    colors: ObjectId[];
   category: ObjectId;
   subCategory?: ObjectId;
