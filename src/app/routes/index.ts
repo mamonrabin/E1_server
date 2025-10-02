@@ -11,6 +11,7 @@ import { authRoutes } from '../modules/auth/auth.route';
 import { productRoutes } from '../modules/product/product.route';
 import { cartRoutes } from '../modules/cart/cart.route';
 import { orderRoutes } from '../modules/order/order.route';
+import { contactRoutes } from '../modules/contact/contact.route';
 
 const rounter = Router();
 
@@ -62,6 +63,10 @@ const modulRouter = [
   {
     path: '/order',
     route: orderRoutes,
+  },
+  {
+    path: '/contact',
+    route: contactRoutes,
   },
 ];
 
