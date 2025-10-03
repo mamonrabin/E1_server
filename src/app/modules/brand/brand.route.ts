@@ -15,7 +15,8 @@ router.get('/:id', brandController.getSingleBrand);
 router.get('/brandSlug/:slug', brandController.getSingleBrandBySlug);
 // router.get('/slugTask/:slug', taskController.getSingleTaskBySlug);
 
-router.put('/:id', brandController.updateSingleBrand);
+router.put('/:id', upload.single('image'), brandController.updateSingleBrand);
+
 router.delete('/:id', brandController.deleteSingleBrand);
 
 export const brandRoutes = router;

@@ -10,7 +10,7 @@ router.get('/:id', blogController.getSingleBlog);
 router.get('/blogSlug/:slug', blogController.getSingleBlogBySlug);
 // router.get('/slugTask/:slug', taskController.getSingleTaskBySlug);
 
-router.put('/:id', blogController.updateSingleBlog);
+router.put('/:id', upload.single('image'), blogController.updateSingleBlog);
 router.delete('/:id', blogController.deleteSingleBlog);
 
 export const blogRoutes = router;

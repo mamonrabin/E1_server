@@ -92,30 +92,55 @@ const getSingleBlogBySlug = async (
   }
 };
 
-const updateSingleBlog = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+// const updateSingleBlog = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction,
+// ) => {
+//   try {
+//     const { id } = req.params;
+//     const updateBlog = req.body;
+//     const result = await blogService.updateSingleBlogByBD(id, updateBlog);
+//     res.status(200).json({
+//       success: true,
+//       message: 'update sinngle blog successfully',
+//       data: result,
+//     });
+//   } catch (error) {
+//     // res.status(500).json({
+//     //   success: false,
+//     //   message: 'Internal server error',
+//     //   error: error,
+//     // });
+//     // using global error handler
+//     next(error);
+//   }
+// };
+
+const updateSingleBlog = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { id } = req.params;
-    const updateBlog = req.body;
+
+    // Handle image upload if new file is provided
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
+
+    const updateBlog = {
+      ...req.body,
+      ...(imageUrl && { image: imageUrl }), // only overwrite if new image uploaded
+    };
+
     const result = await blogService.updateSingleBlogByBD(id, updateBlog);
+
     res.status(200).json({
       success: true,
-      message: 'update sinngle blog successfully',
+      message: 'Updated single blog successfully',
       data: result,
     });
   } catch (error) {
-    // res.status(500).json({
-    //   success: false,
-    //   message: 'Internal server error',
-    //   error: error,
-    // });
-    // using global error handler
     next(error);
   }
 };
+
 
 const deleteSingleBlog = async (
   req: Request,

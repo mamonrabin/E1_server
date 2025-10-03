@@ -99,7 +99,12 @@ const updateSingleBrand = async (
 ) => {
   try {
     const { id } = req.params;
-    const updateBrand = req.body;
+    const imageUrl = req.file ? `/uploads/${req.file.filename}` : undefined;
+    
+    const updateBrand = {
+      ...req.body,
+      ...(imageUrl && { image: imageUrl }), // only overwrite if new image uploaded
+    };
     const result = await brandService.updateSingleBrandByBD(id, updateBrand);
     res.status(200).json({
       success: true,
@@ -116,6 +121,9 @@ const updateSingleBrand = async (
     next(error);
   }
 };
+
+
+
 
 const deleteSingleBrand = async (
   req: Request,
