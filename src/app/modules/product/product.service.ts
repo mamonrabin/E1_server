@@ -69,58 +69,53 @@ const getDiscountProducts = async (limit = 8) => {
   return result;
 };
 
-const getBestSellerProducts = async (limit = 8) => {
-  // Check if there are products with soldQuantity > 0
-  const soldProducts = await productModel
+// const getBestSellerProducts = async (limit = 8) => {
+//   // Check if there are products with soldQuantity > 0
+//   const soldProducts = await productModel
   
-    .find({ soldQuantity: { $gt: 0 } })
-    .populate([
-      {
-        path: 'category',
-      },
-      {
-        path: 'colors',
-        populate: {
-        path: 'size',
-      },
-      },
-      {
-        path: 'size',
-      },
-      {
-        path: 'brand',
-      },
-    ])
-    .sort({ soldQuantity: -1 }) // highest sales first
-    .limit(limit);
+//     .find({ soldQuantity: { $gt: 0 } })
+//     .populate([
+//       {
+//         path: 'category',
+//       },
+//       {
+//         path: 'colors',
+        
+//       },
+//       {
+//         path: 'brand',
+//       },
+//     ])
+//     .sort({ soldQuantity: -1 }) // highest sales first
+//     .limit(limit);
 
-  if (soldProducts.length > 0) {
-    return soldProducts;
-  }
+//   if (soldProducts.length > 0) {
+//     return soldProducts;
+//   }
 
-  // If no sold products → return latest 8 products
-  const defaultProducts = await productModel
+//   // If no sold products → return latest 8 products
+//   const defaultProducts = await productModel
   
-    .find()
-    .populate([
-      {
-        path: 'category',
-      },
-      {
-        path: 'colors',
-        populate: {
-        path: 'size',
-      },
-      },
-      {
-        path: 'brand',
-      },
-    ])
-    .sort({ createdAt: -1 }) // newest first
-    .limit(limit);
+//     .find()
+//     .populate([
+//       {
+//         path: 'category',
+//       },
+//       {
+//         path: 'colors',
+//         populate: {
+//         path: 'size',
+//       },
+//       },
+//       {
+//         path: 'brand',
+//       },
+//     ])
+//     .sort({ createdAt: -1 }) // newest first
+//     .limit(limit);
 
-  return defaultProducts;
-};
+//   return defaultProducts;
+// };
 
 // const getAllProductByBDWithPagination = async (
 //   query: Record<string, unknown>,
@@ -166,6 +161,122 @@ const getBestSellerProducts = async (limit = 8) => {
 
 //   return result;
 // };
+
+// const getBestSellerProducts = async (limit = 6) => {
+//   // Get sold products
+//   const soldProducts = await productModel
+//     .find({ soldQuantity: { $gt: 0 } })
+//     .populate([
+//       { path: "category" },
+//       { path: "colors" },
+//       { path: "brand" },
+//     ]);
+
+//   if (soldProducts.length > 0) {
+//     // Shuffle and take random `limit` products
+//     const shuffled = soldProducts.sort(() => Math.random() - 0.5);
+//     return shuffled.slice(0, limit);
+//   }
+
+//   // If sold products are less than 5 → fill with latest products
+//   const neededCount = Math.max(limit - soldProducts.length, 0);
+
+//   const additionalProducts = await productModel
+//     .find({
+//       _id: { $nin: soldProducts.map((p) => p._id) },
+//     })
+//     .populate([
+//       { path: "category" },
+//       {
+//         path: "colors",
+//         populate: { path: "size" },
+//       },
+//       { path: "brand" },
+//     ])
+//     .sort({ createdAt: -1 })
+//     .limit(neededCount);
+
+//   return [...soldProducts, ...additionalProducts].slice(0, limit);
+// };
+
+const getBestSellerProducts = async (limit = 6) => {
+  // Get sold products
+  const soldProducts = await productModel
+    .find({ soldQuantity: { $gt: 0 } })
+    .populate([
+      { path: "category" },
+      { path: "colors" },
+      { path: "brand" },
+    ]);
+
+  if (soldProducts.length > 0) {
+    // Shuffle sold products and take random ones
+    const shuffledSold = soldProducts.sort(() => Math.random() - 0.5);
+
+    if (soldProducts.length >= limit) {
+      // If we have enough sold products, just return random ones
+      return shuffledSold.slice(0, limit);
+    }
+
+    // If sold products are less than limit → add more random products
+    const neededCount = limit - soldProducts.length;
+
+    const additionalProducts = await productModel
+      .find({
+        _id: { $nin: soldProducts.map((p) => p._id) },
+      })
+      .populate([
+        { path: "category" },
+        {
+          path: "colors",
+          populate: { path: "size" },
+        },
+        { path: "brand" },
+      ])
+      .sort({ createdAt: -1 })
+      .limit(neededCount);
+
+    return [...shuffledSold, ...additionalProducts];
+  }
+
+  // If no sold products → just return latest products
+  return await productModel
+    .find()
+    .populate([
+      { path: "category" },
+      {
+        path: "colors",
+        populate: { path: "size" },
+      },
+      { path: "brand" },
+    ])
+    .sort({ createdAt: -1 })
+    .limit(limit);
+};
+
+
+
+const getTrendingProducts = async (limit = 6) => {
+  // ✅ Find only products labeled as "Trending"
+  const trendingProducts = await productModel
+    .find({ labels: "Trending" })
+    .populate([
+      { path: "category" },
+      {
+        path: "colors",
+        populate: { path: "size" },
+      },
+      { path: "brand" },
+    ])
+    .sort({ createdAt: -1 }) // newest trending first
+    .limit(limit);
+
+  return trendingProducts;
+};
+
+
+
+
 
 const getAllProductByBDWithPagination = async (
   query: Record<string, unknown>,
@@ -336,6 +447,7 @@ export const productService = {
   getNewArrivalProducts,
   getDiscountProducts,
   getBestSellerProducts,
+  getTrendingProducts,
   getRelatedProducts,
   getRelatedProductsBySlug
 };

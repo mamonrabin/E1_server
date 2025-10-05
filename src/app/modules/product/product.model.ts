@@ -55,7 +55,7 @@ const productSchema = new Schema<TProduct>(
     weight: { type: String },
     labels: {
       type: String,
-      enum: ['New', 'Best Seller', 'Limited Stock', 'Sale', 'Featured'],
+      enum: ['New', 'Trending', 'Limited Stock', 'Sale', 'Featured'],
     },
   },
   {

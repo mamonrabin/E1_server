@@ -104,6 +104,24 @@ const getBestSellerProducts = async (
   }
 };
 
+const getTrendingProducts = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const limit = req.query.limit ? Number(req.query.limit) : 10;
+    const result = await productService.getTrendingProducts(limit);
+    res.status(200).json({
+      success: true,
+      message: 'trnding products fetched successfully',
+      data: result,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getAllProductByPagination = async (
   req: Request,
   res: Response,
@@ -191,20 +209,37 @@ const updateSingleProduct = async (
 ) => {
   try {
     const { id } = req.params;
-    const updateProduct = req.body;
-    const result = await productService.updateSingleProductByBD(
-      id,
-      updateProduct,
-    );
+    const updateData = req.body;
+
+    const files = req.files as {
+      [fieldname: string]: Express.Multer.File[];
+    };
+
+    // Handle updated images if any are uploaded
+    const thumbalImage = files?.thumbal_image?.[0]?.filename;
+    const backviewImage = files?.backview_image?.[0]?.filename;
+    const images =
+      files?.images?.map((file) => `/uploads/${file.filename}`) || [];
+
+    const updatedProduct = {
+      ...updateData,
+      ...(thumbalImage && { thumbal_image: `/uploads/${thumbalImage}` }),
+      ...(backviewImage && { backview_image: `/uploads/${backviewImage}` }),
+      ...(images.length > 0 && { images }),
+    };
+
+    const result = await productService.updateSingleProductByBD(id, updatedProduct);
+
     res.status(200).json({
       success: true,
-      message: 'update sinngle product successfully',
+      message: 'Product updated successfully',
       data: result,
     });
   } catch (error) {
     next(error);
   }
 };
+
 
 const getReletiveProductBySlug = async (
   req: Request,
@@ -254,5 +289,7 @@ export const productController = {
   getNewArrivalProducts,
   getDiscountProducts,
   getBestSellerProducts,
-  getReletiveProduct
+  getTrendingProducts,
+  getReletiveProduct,
+  getReletiveProductBySlug
 };

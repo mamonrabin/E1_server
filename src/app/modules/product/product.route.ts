@@ -18,6 +18,7 @@ router.get('/', productController.getAllProduct);
 router.get('/new-arrivals', productController.getNewArrivalProducts);
 router.get('/discount-products', productController.getDiscountProducts);
 router.get('/best-sellers', productController.getBestSellerProducts);
+router.get('/trending-products', productController.getBestSellerProducts);
 router.get('/pagination', productController.getAllProductByPagination);
 router.get("/related/:id", productController.getReletiveProduct);
 // router.get("/related/:slug", productController.getReletiveProduct);
@@ -26,7 +27,13 @@ router.get('/productSlug/:slug', productController.getSingleProductBySlug);
 
 // router.get('/slugTask/:slug', taskController.getSingleTaskBySlug);
 
-router.put('/:id', productController.updateSingleProduct);
+router.put('/:id',
+  upload.fields([
+    { name: 'thumbal_image', maxCount: 1 },
+    { name: 'backview_image', maxCount: 1 },
+    { name: 'images', maxCount: 5 },
+  ]),
+  productController.updateSingleProduct);
 router.delete('/:id', productController.deleteSingleProduct);
 
 export const productRoutes = router;

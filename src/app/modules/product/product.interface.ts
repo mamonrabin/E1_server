@@ -23,5 +23,5 @@ export type TProduct = {
   stock_status?: 'in_stock' | 'out_of_stock' | 'pre_order';
   video_url?: string;
   weight?: string;
-  labels?: 'New' | 'Best Seller' | 'Limited Stock' | 'Sale' | 'Featured';
+  labels?: 'New' | 'Trending' | 'Limited Stock' | 'Sale' | 'Featured';
 };
