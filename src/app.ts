@@ -14,7 +14,7 @@ app.use('/api/v1/uploads', express.static(path.join(__dirname, '../uploads')));
 app.use('/api/v1', rounter);
 
 app.get('/', (req: Request, res: Response) => {
-  res.send('soza server is running');
+  res.send('titasweb server is running');
 });
 
 //global error handler
