@@ -13,7 +13,7 @@ export type TOrder = {
   totalPrice: number;
   shippingCost: number;
   couponRef?: ObjectId;
-  // userRef: ObjectId;
+  userRef: ObjectId;
   products: TOrderProduct[];
   status:
     | 'OrderPlaced'
@@ -31,6 +31,6 @@ export type TOrder = {
   road?: string;
   thana?: string;
   altPhone?: string;
-  paymentMethod: 'CashOnDelivery' | 'bkash' | 'card';
+  paymentMethod: 'COD' | 'card';
   note?: string;
 };
